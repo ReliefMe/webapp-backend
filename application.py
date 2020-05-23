@@ -2,10 +2,12 @@ from flask import Flask, render_template, url_for, request, jsonify, make_respon
 import text_api
 import pandas as pd
 import numpy as np
-from flask_cors import CORS
+
+# from flask_cors import CORS
+# Flask-Cors==3.0.8
 
 app = Flask(__name__)
-CORS(app)
+# CORS(app)
 
 @app.route("/")
 def home():
