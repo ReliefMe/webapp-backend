@@ -35,7 +35,7 @@ def post():
     # message = {"data": "Hello World"}
     # return jsonify(message)
 
-@app.route('/api', methods=['GET'])
+@app.route('/', methods=['GET'])
 def get():
     message = { 'message': 'This api just has endpoints for POST request' }
     return make_response(jsonify(message), 404)
