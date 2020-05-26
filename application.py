@@ -1,35 +1,46 @@
+# Libraries for backend server
 from flask import Flask, render_template, url_for, request, jsonify, make_response
+
+# libraries and files for AI model
+from sklearn.externals import joblib
 import text_api
 import pandas as pd
 import numpy as np
-from flask_cors import CORS
+#from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+#CORS(app)
 
-@app.route("/api/predict/", methods=['GET','POST'])
-def api():
-    if request.method == 'GET':
-        return make_response(jsonify({ 'message': 'This has no endpoint for GET request' }), 200)
+# Route for app.html rendering 
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    # calling the data function for result from form
+    res = data()
+    return render_template('app.html',prediction=res)
 
+# Posting data from form using ajax
+@app.route('/data', methods=['GET', 'POST'])
+def data():
     if request.method == 'POST':
-        age = request.form.get('age')
-        gender = request.form.get('gender')
-        smoker = request.form.get('smoker')
-        symptoms = request.form.getlist('reported_symptoms')
-        medical_history = request.form.getlist('medical_history')
-        response = {"age": int(age), "gender": gender,
-        "smoker": smoker, "patient_reported_symptoms": symptoms,
-        "medical_history": medical_history}
-        # print(response)
-        symptoms = ",".join(symptoms)
-        medical_history = ",".join(medical_history)
-        response = {"age": int(age), "gender": gender,
-        "smoker": smoker, "patient_reported_symptoms": symptoms,
-        "medical_history": medical_history}
-        # print(response)
-        df1 = pd.DataFrame(response,index=[0])
-        df1 = df1.replace('NaN',np.NaN)
-        prediction = text_api.predict(df1,"textual_model83.sav")
-        print("prediction is: ",prediction)
-        return make_response(jsonify({"data":round(prediction,3)}), 200)
+        try: 
+            age = request.form.get('age')
+            gender = request.form.get('gender')
+            smoker = request.form.get('smoker')
+            symptoms = request.form.getlist('reported_symptoms')
+            medical_history = request.form.getlist('medical_history')
+            symptoms = ",".join(symptoms)
+            medical_history = ",".join(medical_history)
+            response = {"age": [int(age)], "gender": [gender],
+            "smoker": [smoker], "patient_reported_symptoms": [symptoms],
+            "medical_history": [medical_history]
+            }
+            df1 = pd.DataFrame(response)
+            prediction = text_api.predict(df1, "./model84.pkl")
+            if prediction[0] == 0:
+                # if prediction is negative
+                return "Great, you are out of danger according to our model keep following precautions."
+            else:
+                return "You are at risk according to our model, consult a doctor and keep yourself away from others."
+        except:
+            # if there is a bug in form submission
+             return "Please check if the values are entered correctly."

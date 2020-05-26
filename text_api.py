@@ -19,6 +19,7 @@ from sklearn.metrics import classification_report
 from imblearn.over_sampling import SMOTE
 from collections import Counter
 from sklearn.preprocessing import LabelEncoder
+from sklearn.externals import joblib
 
 import pickle
 
@@ -26,6 +27,19 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.feature_extraction.text import CountVectorizer
+
+def preprocess(csv):
+    model = textual_model()
+    df_clean = model.load_csv(csv)
+    df2 = model.load_medical_history(df_clean)
+    df3 = model.load_patient_symptoms(df_clean)
+    df4 = model.merge_df2_df3(df2, df3)
+    upd_df4 = model.gen_smok_encoding(df4)
+    df5, target_labels = model.merge_dataframes(upd_df4)
+
+    return df5, target_labels
+
+
 
 def predict(csv, model_sav):
     """
@@ -43,7 +57,8 @@ def predict(csv, model_sav):
     model = textual_model()
     result = model.test_data(csv, model_sav)
     # returns only the positive probability of the first sample
-    return 100*result[0][1]
+#     return 100*result[0][1]
+    return result
 
 def train(csv, save_model_name):
     """
@@ -64,37 +79,11 @@ class textual_model:
     def __init__(self):
         pass
 
-#     def load_model(self, model_sav):
-#         self.loaded_model = pickle.load(open(model_sav, 'rb'))
-    
-# #     def predict(self, df):
-# #         df_processed = self.preprocess(df)
-# #         return self.loaded_model.predict_proba(df_processed)
-
-#     def set_NaN_None(df, column):
-#         """
-#         Replace NaN with "None," so that model can handle
-#         """
-#         df_clean[column].fillna("None,", inplace = True)
-
-#     def preprocess(df):
-#         df = df.drop(columns=["seq_id", "patient_id", "date" , "cough_filename", "finger_filename",
-#                               "patient_smartphone", "breathing_filename"])
-
-#         self.set_NaN_None(df, "medical_history")
-#         self.set_NaN_None(df, "patient_reported_symptoms")
-
-#         df = self.load_medical_history(df)
-#         df = self.load_patient_symptoms(df)
-
-#         return df
-
-
     def load_csv(self, csv_path):
         df = pd.read_csv(csv_path)
         
         df_clean = df.drop(columns=["seq_id", "patient_id", "date" , "cough_filename", "finger_filename",
-                                        "patient_smartphone", "breathing_filename"])
+                                    "patient_smartphone", "breathing_filename"])
 
         ff = df_clean["medical_history"].isna().sum()
 
@@ -116,7 +105,7 @@ class textual_model:
 
         # Filling nan values with None.
         df_clean["medical_history"].fillna("None,", inplace = True) 
-        df_clean["smoker"].fillna("no", inplace = True) 
+#         df_clean["smoker"].fillna("no", inplace = True) 
         df_clean["patient_reported_symptoms"].fillna("None,", inplace = True) 
         return df_clean
 
@@ -137,6 +126,22 @@ class textual_model:
 
     def load_patient_symptoms(self, df_clean):
         # reading csv_file of patient recorded symptoms
+        top_symptoms = ['Fever,', 'chills,', 'or sweating,', 'Shortness of breath',
+       'Loss of taste,', 'Loss of smell,', 'New or worsening cough,',
+       'Sore throat,', 'Body aches,', 'None,']
+        df3 = df_clean.copy()
+        for ps in top_symptoms:
+            df3[ps] = df_clean.patient_reported_symptoms.str.contains(ps).astype(int)
+            df3["patient_reported_symptoms"] = df_clean.patient_reported_symptoms.str.replace(ps+ ",", "")
+
+        df3["total symptoms"] = df_clean.patient_reported_symptoms.str.count(",")
+        df3 = df3.drop(columns = ["patient_reported_symptoms", "medical_history", "corona_test", "age", "gender", "smoker"])
+
+        df3.rename(columns={'None,':'Nothing'}, 
+                         inplace=True)
+        return df3
+
+    def load_patient_symptoms_test(self, df_clean):
         top_symptoms = ['Fever,', 'chills,', 'or sweating,', 'Shortness of breath',
        'Loss of taste,', 'Loss of smell,', 'New or worsening cough,',
        'Sore throat,', 'Body aches,', 'None,']
@@ -169,29 +174,26 @@ class textual_model:
         return (neg_per, pos_per)
 
     def gen_smok_encoding(self, df4):
+
         # For checking distribution of values in each column or in each feature.. 
-
-        unique = df4["age"].value_counts()
-        # print("Number of unique age values :", unique.shape[0])
-        # the top 10 ages that were repeated again and again
-        # print(unique.head(10))
-
-        # For checking distribution of values in each column or in each feature..  (checking distribution of age)
-
-        unique = df4["gender"].value_counts()
-        # print("Number of unique age values :", unique.shape[0])
-        # the top 10 ages that were repeated again and again
-        # print(unique.head(10))
-
-        # For checking distribution of values in each column or in each feature..  (checking distribution of )
         unique = df4["smoker"].value_counts()
         # print("Number of unique age values :", unique.shape[0])
-        # the top 10 ages that were repeated again and again
-        # print(unique.head(10))
-
+        
         df4['gender'] = LabelEncoder().fit_transform(df4['gender'])
         df4['smoker'] = LabelEncoder().fit_transform(df4['smoker'])
 
+        return df4
+
+    def gen_smok_encoding_test(self, df4):
+        # if df4["smoker"][0] == "no":
+        #     df4["smoker"].replace({"no": 0}, inplace=True)
+        #     # df4["gender"] = 0
+        #     return df4
+        # else:
+        #     df4["smoker"].replace({"yes": 1}, inplace=True)
+        #     # df4["gender"] = 0
+        #     return df4
+        df4 = df4.drop(columns = ["gender", "smoker"])
         return df4
 
     def merge_dataframes(self, df4):
@@ -201,8 +203,8 @@ class textual_model:
         df5 = df5.replace(to_replace ="positive", 
                  value =1)
         target_labels = df5["corona_test"] 
-        df5 = df5.drop(columns = ["corona_test"])
-        # print("Df5: ", df5.head(1))
+        df5 = df5.drop(columns = ["corona_test", "gender", "smoker"])
+        print("Df5: ", df5.head(1))
         return (df5, target_labels)
 
 
@@ -216,13 +218,6 @@ class textual_model:
         # print("Before Smote: ", Counter(y_train))
         # print("After Smote: ", Counter(y_train_smote))
 
-        # so as you can say from the results that before smoting we had only 20 samples from class 1
-        # and we had 74 samples from class 0 so we performed smote to make them equal. 
-
-        # Normalising train and test data
-#         min_max_scaler = preprocessing.MinMaxScaler()
-#         X_train_scaled = min_max_scaler.fit_transform(X_train_smote)
-#         X_test_scaled = min_max_scaler.fit_transform(X_test)
         max_age = X_train_smote["age"].max()
         X_train_smote["age"] = X_train_smote["age"] / max_age
         X_test["age"] = X_test["age"] / max_age
@@ -233,10 +228,10 @@ class textual_model:
         clf.fit(X_train_smote, y_train_smote)
         y_pred = clf.predict(X_test)
         accuracy = accuracy_score(y_pred,y_test)
-        # print("Accuracy on test dataset : ", accuracy)
+        print("Accuracy on test dataset : ", accuracy)
 
         y_test = np.array(y_test).astype("int")
-        # print(classification_report(y_test, y_pred))
+        print(classification_report(y_test, y_pred))
         pd.crosstab(y_test, y_pred)
 
         filename = save_model_name
@@ -248,7 +243,7 @@ class textual_model:
         df2 = self.load_medical_history(df_clean)
         df3 = self.load_patient_symptoms(df_clean)
         df4 = self.merge_df2_df3(df2, df3)
-        neg_per, pos_per = self.count_class_per(df4)
+        # neg_per, pos_per = self.count_class_per(df4)
         upd_df4 = self.gen_smok_encoding(df4)
         df5, target_labels = self.merge_dataframes(upd_df4)
         filename = self.train_model(df5, target_labels, save_model_name)
@@ -265,19 +260,21 @@ class textual_model:
         # preprocess data
         df_clean = self.load_test_csv(csv)
         df2 = self.load_medical_history(df_clean)
-        df3 = self.load_patient_symptoms(df_clean)
+        df3 = self.load_patient_symptoms_test(df_clean)
         df4 = self.merge_df2_df3(df2, df3)
-        upd_df4 = self.gen_smok_encoding(df4)
-        # df5, target_labels = self.merge_dataframes(upd_df4)
+        upd_df4 = self.gen_smok_encoding_test(df4)
         new_data = self.norm_test_data(upd_df4)
+        print(new_data)
         result = self.load(model_name, new_data)
         return result
         
     def load(self, model_name, X_test):
         # load the model from disk
-        loaded_model = pickle.load(open(model_name, 'rb'))
+        loaded_model = joblib.load(model_name)
+#         loaded_model = pickle.load(open(model_name, 'rb'))
 #         result = loaded_model.score(X_test, Y_test)
 #         y_pred = loaded_model.predict(X_test_scaled)
-        y_pred = loaded_model.predict_proba(X_test)
+#         y_pred = loaded_model.predict_proba(X_test)
+        y_pred = loaded_model.predict(X_test)
         #print("tadaaaa the prediction is : ",y_pred)
         return y_pred
