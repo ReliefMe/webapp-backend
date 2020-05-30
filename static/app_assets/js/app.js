@@ -121,10 +121,10 @@ async function fetchResult(e) {
         //const URL = "http://127.0.0.1:5000/data";
 
         var messgae_print = $('#message_print').val();
-                    swal({
-                       title: 'Result',
-                       text: messgae_print
-                   });
+                  //  swal({
+                    //   title: 'Result',
+                    //   text: messgae_print
+                  // });
 
 
         // try {
