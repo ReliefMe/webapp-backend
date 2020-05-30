@@ -1,9 +1,7 @@
-# Libraries for backend server
 from flask import Flask, render_template, url_for, request, jsonify, make_response
-
-# libraries and files for AI model
 from sklearn.externals import joblib
 import text_api
+
 import pandas as pd
 import numpy as np
 #from flask_cors import CORS
@@ -11,14 +9,14 @@ import numpy as np
 app = Flask(__name__)
 #CORS(app)
 
-# Route for app.html rendering 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    # calling the data function for result from form
-    res = data()
-    return render_template('app.html',prediction=res)
+    dicti = data()
+    return render_template('app.html',predic=dicti)
+    
+    
 
-# Posting data from form using ajax
+
 @app.route('/data', methods=['GET', 'POST'])
 def data():
     if request.method == 'POST':
@@ -36,11 +34,18 @@ def data():
             }
             df1 = pd.DataFrame(response)
             prediction = text_api.predict(df1, "./model84.pkl")
+            # predd = list(prediction)
+            # pred = [{"data" : prediction[0].tolist()}]
             if prediction[0] == 0:
-                # if prediction is negative
                 return "Great, you are out of danger according to our model keep following precautions."
             else:
                 return "You are at risk according to our model, consult a doctor and keep yourself away from others."
+
         except:
-            # if there is a bug in form submission
-             return "Please check if the values are entered correctly."
+             return "Please check if the values are entered correctly"
+    
+#app.run(debug=True)
+
+
+
+
