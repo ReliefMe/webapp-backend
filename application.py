@@ -26,7 +26,7 @@ def data():
             symptoms = request.form.getlist('reported_symptoms')
             # filePath = "/home/naufil/Desktop/reliefme/webapp-backend/" + cough_audio.filename
             # print(filePath)
-            cough_audio.save(filePath)
+            # cough_audio.save(filePath)
             medical_history = request.form.getlist('medical_history')
             symptoms = ",".join(symptoms) + ","
             medical_history = ",".join(medical_history) + ","
