@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, request, jsonify, make_response
 from sklearn.externals import joblib
 import text_api
-
+from werkzeug import *
 import pandas as pd
 import numpy as np
 #from flask_cors import CORS
@@ -24,6 +24,9 @@ def data():
             smoker = request.form.get('smoker')
             cough_audio = request.files["cough_audio"]
             symptoms = request.form.getlist('reported_symptoms')
+            # filePath = "/home/naufil/Desktop/reliefme/webapp-backend/" + cough_audio.filename
+            # print(filePath)
+            cough_audio.save(filePath)
             medical_history = request.form.getlist('medical_history')
             symptoms = ",".join(symptoms) + ","
             medical_history = ",".join(medical_history) + ","
