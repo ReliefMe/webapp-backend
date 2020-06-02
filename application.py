@@ -13,9 +13,7 @@ app = Flask(__name__)
 def index():
     dicti = data()
     return render_template('app.html',predic=dicti)
-    
-    
-
+        
 
 @app.route('/data', methods=['GET', 'POST'])
 def data():
@@ -26,16 +24,15 @@ def data():
             smoker = request.form.get('smoker')
             symptoms = request.form.getlist('reported_symptoms')
             medical_history = request.form.getlist('medical_history')
-            symptoms = ",".join(symptoms)
-            medical_history = ",".join(medical_history)
+            symptoms = ",".join(symptoms) + ","
+            medical_history = ",".join(medical_history) + ","
             response = {"age": [int(age)], "gender": [gender],
             "smoker": [smoker], "patient_reported_symptoms": [symptoms],
             "medical_history": [medical_history]
             }
             df1 = pd.DataFrame(response)
-            prediction = text_api.predict(df1, "./model84.pkl")
-            # predd = list(prediction)
-            # pred = [{"data" : prediction[0].tolist()}]
+            # print(df1)
+            prediction = text_api.predict(df1, "./model81.pkl")
             if prediction[0] == 0:
                 return "Great, you are out of danger according to our model keep following precautions."
             else:
@@ -44,7 +41,7 @@ def data():
         except:
              return "Please check if the values are entered correctly"
     
-#app.run(debug=True)
+# app.run(debug=True)
 
 
 
