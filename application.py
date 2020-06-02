@@ -22,6 +22,7 @@ def data():
             age = request.form.get('age')
             gender = request.form.get('gender')
             smoker = request.form.get('smoker')
+            cough_audio = request.files["cough_audio"]
             symptoms = request.form.getlist('reported_symptoms')
             medical_history = request.form.getlist('medical_history')
             symptoms = ",".join(symptoms) + ","
@@ -41,7 +42,7 @@ def data():
         except:
              return "Please check if the values are entered correctly"
     
-# app.run(debug=True)
+app.run(debug=True)
 
 
 
