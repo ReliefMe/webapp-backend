@@ -113,7 +113,7 @@ class textual_model:
         top_medical_history = ['None,', 'Asthma or chronic lung disease,',
        'Disease or conditions that make it harder to cough,',
        'Diabetes with complications,', 'Pregnancy,',
-       'Congestive heart failure,', 'Extreme obesity']
+       'Congestive heart failure,', 'Extreme obesity,']
 
         df2 = df_clean.copy()
         for mh in top_medical_history:
@@ -125,8 +125,7 @@ class textual_model:
         return df2
 
     def load_patient_symptoms(self, df_clean):
-        # reading csv_file of patient recorded symptoms
-        top_symptoms = ['Fever,', 'chills,', 'or sweating,', 'Shortness of breath',
+        top_symptoms = ['Fever,', 'chills,', 'or sweating,', 'Shortness of breath,',
        'Loss of taste,', 'Loss of smell,', 'New or worsening cough,',
        'Sore throat,', 'Body aches,', 'None,']
         df3 = df_clean.copy()
@@ -137,12 +136,12 @@ class textual_model:
         df3["total symptoms"] = df_clean.patient_reported_symptoms.str.count(",")
         df3 = df3.drop(columns = ["patient_reported_symptoms", "medical_history", "corona_test", "age", "gender", "smoker"])
 
-        df3.rename(columns={'None,':'Nothing'}, 
+        df3.rename(columns={'None,':'Nothing,'}, 
                          inplace=True)
         return df3
 
     def load_patient_symptoms_test(self, df_clean):
-        top_symptoms = ['Fever,', 'chills,', 'or sweating,', 'Shortness of breath',
+        top_symptoms = ['Fever,', 'chills,', 'or sweating,', 'Shortness of breath,',
        'Loss of taste,', 'Loss of smell,', 'New or worsening cough,',
        'Sore throat,', 'Body aches,', 'None,']
         df3 = df_clean.copy()
@@ -153,7 +152,7 @@ class textual_model:
         df3["total symptoms"] = df_clean.patient_reported_symptoms.str.count(",")
         df3 = df3.drop(columns = ["patient_reported_symptoms", "medical_history", "age", "gender", "smoker"])
 
-        df3.rename(columns={'None,':'Nothing'}, 
+        df3.rename(columns={'None,':'Nothing,'}, 
                          inplace=True)
         return df3
 
@@ -264,7 +263,21 @@ class textual_model:
         df4 = self.merge_df2_df3(df2, df3)
         upd_df4 = self.gen_smok_encoding_test(df4)
         new_data = self.norm_test_data(upd_df4)
-        print(new_data)
+        # print(new_data)
+        # print(new_data["Pregnancy,"])
+        # print(new_data["Diabetes with complications,"])
+        # print(new_data["Disease or conditions that make it harder to cough,"])
+        # print(new_data["Congestive heart failure,"])
+        # print(new_data["Extreme obesity,"])
+        # print(new_data["Fever,"])
+        # print(new_data["chills,"])
+        # print(new_data["or sweating,"])
+        # print(new_data["Shortness of breath,"])
+        # print(new_data["New or worsening cough,"])
+        # print(new_data["Sore throat,"])
+        # print(new_data["Body aches,"])
+        # print(new_data["Loss of smell,"])
+        
         result = self.load(model_name, new_data)
         return result
         

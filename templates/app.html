@@ -7,18 +7,21 @@
     <title>ReliefMe | App</title>
     <link rel="stylesheet" href="https://bootswatch.com/4/lumen/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css">
-    <link rel="stylesheet" href="static/app_assets/css/style.css">
+
+    
 </head>
 
 <body class="theme-bg-secondary">
+
     <header class="text-center">
-        <a href="index.html"><img src="static/app_assets/images/logo-footer.png"></a>
+        <img src="static/app_assets/images/logo-footer.png">
     </header>
     <div class="container mt-1 mb-3 p-5 bg-secondary rounded">
+
         <div id="step-counter" class="container-fluid text-center mb-3">
             <h1 class="bg-primary pt-2 pb-2 pl-4 pr-4 rounded-circle text-light d-inline">0</h1>
         </div>
-        <form action="" method="POST" id="mydatas">
+        <form action="" method="POST" id="mydatas"> 
             <!--0-->
             <!--Consent Form-->
             <div class="step form-group">
@@ -64,7 +67,7 @@
                 <h3>Which of the following COVID-19 symptoms are you facing?</h3>
                 <div class="form-check">
                     <input type="checkbox" name="reported_symptoms" class="form-check-input"
-                        value="Fever, chills, sweating" id="rs1">
+                        value="Fever, chills, or sweating" id="rs1">
                     <label for="rs1" class="form-check-label">
                         Fever, chills, sweating
                     </label>
@@ -147,8 +150,8 @@
                 <div class="form-check">
                     <input type="checkbox" name="medical_history" id="mh7" class="form-check-input" value="None">
                     <label for="mh7" class="form-check-label">None of these</label>
-
-                    <input type="hidden" id="message_print" value="{{prediction}}">
+                    
+                    <input type="hidden" id="message_print" value="${{predic}}">
                 </div>
             </div>
 
@@ -158,17 +161,27 @@
                 </div>
                 <div class="col container-fluid text-right">
                     <button class="btn btn-primary btn-lg" type="button" id="next">Next</button>
-                    <button type="submit" class="btn btn-success btn-lg" id="submit">Check</button>
+                    <input type="submit" class="btn btn-success btn-lg" value="Check" id="submit">
                 </div>
-            </div>
-        </form>
-    </div>
-    <noscript>Please allow this page to run JavaScript!</noscript>
 
+                <!-- <div class="col container-fluid text-right">
+                    <button class="btn btn-primary btn-lg" type="submit" id="next01">submit</button>
+                    
+                </div> -->
+            </div>
+    </div>
+    </form>
+    </div>
+    
+    <noscript>Please allow this page to run JavaScript!</noscript>
+    <link rel="stylesheet" href="static/app_assets/css/style.css">
     <script src="static/app_assets/js/jquery.js">
     </script>
-    <script src="https://code.jquery.com/jquery-3.5.1.js"
-        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+ 
+    <script
+  src="https://code.jquery.com/jquery-3.5.1.js"
+  integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+  crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
         integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
     </script>
@@ -178,6 +191,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js"></script>
 
     <script src="static/app_assets/js/app.js"></script>
+
 
 </body>
 
