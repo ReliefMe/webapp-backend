@@ -1,8 +1,6 @@
 from flask import Flask, render_template, url_for, request, jsonify, make_response, flash, redirect
 from sklearn.externals import joblib
-import os 
 import librosa
-import wave
 
 import cough as CP
 import text_api
