@@ -21,3 +21,4 @@ sklearn==0.0
 Werkzeug==1.0.0
 xgboost==1.0.2
 librosa==0.7.2
+SoundFile==0.10.3.post1
