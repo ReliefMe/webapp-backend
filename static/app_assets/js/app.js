@@ -99,15 +99,10 @@ function validateForm(step) {
             alert("Please check atleast one value.")
             flag = false;
         }
-
     }
 
     return flag;
 }
-
-// form submission 
-let form = document.querySelector('form');
-let fd = new FormData(form);
 
 // Adding event listener for fetching result
 document.querySelector('#submit').addEventListener('click', fetchResult);
@@ -117,53 +112,35 @@ async function fetchResult(e) {
     e.preventDefault();
 
     if (currentStep === document.getElementsByClassName('step').length - 1 && validateForm(currentStep)) {
+
         console.log("Submitted");
-        //const URL = "http://127.0.0.1:5000/data";
 
         var messgae_print = $('#message_print').val();
-                  //  swal({
-                    //   title: 'Result',
-                    //   text: messgae_print
-                  // });
 
+        var rizwan = document.getElementById('mydatas');
+        // 	console.log(rizwan)
+        let fd = new FormData(rizwan);
 
-        // try {
-        //    const res = await fetch(URL, {
-        //        method: "POST",
-        //        body: fd
-        //     });
-        //     const data = await res.json();
-        //     console.log(data.data);
-            var rizwan =document.getElementById('mydatas');
-		// 	console.log(rizwan)
-		
-		// 	//$('#'+btn).prop('disabled', true);	
-			$.ajax({
-			type: "POST",
-			url: 'https://reliefme.azurewebsites.net/data',
-			data: new FormData(rizwan), // Data sent to server, a set of key/value pairs (i.e. form fields and values)
-			contentType: false,       // The content type used when sending data to the server.
-			cache: false,             // To unable request pages to be cached
-			processData:false,      
-			success: function(result){
-				//alert(result);
-				
-				
-				
-                  //  var messgae_print = $('#message_print').val();
-                    swal({
-                       title: 'Result',
-                       text:  result
-                   });
-					
-								
-			  }
-		
-              });
-              
-    //    }
-    //     catch (err) {
-    //         console.log(err.message);
-    //     }
+        let cough_audio = await fetch(document.getElementsByTagName('audio')[0].src).then(
+            r => r.blob()
+        );
+
+        fd.append("cough_data", cough_audio, "coughFile.wav");
+
+        // 	//$('#'+btn).prop('disabled', true);	
+        $.ajax({
+            type: "POST",
+            url: 'http://127.0.0.1:5000/data',
+            data: fd, // Data sent to server, a set of key/value pairs (i.e. form fields and values)
+            contentType: false, // The content type used when sending data to the server.
+            cache: false, // To unable request pages to be cached
+            processData: false,
+            success: function (result) {
+                swal({
+                    title: 'Result',
+                    text: result
+                });
+            }
+        });
     }
 }
