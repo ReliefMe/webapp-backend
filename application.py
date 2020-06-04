@@ -124,7 +124,7 @@ def data():
         except:
             return "Please check if the values are entered correctly"
     
-# app.run(debug=True)
+#app.run(debug=True)
 
 
 
