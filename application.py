@@ -13,7 +13,7 @@ import numpy as np
 from werkzeug.utils import secure_filename
 
 
-UPLOAD_FOLDER = './cough_rec_Int/uploads'
+UPLOAD_FOLDER = './uploads'
 ALLOWED_EXTENSIONS = {'mp3', 'wav'}
 
 app = Flask(__name__)
@@ -51,10 +51,10 @@ def data():
                 }
             df1 = pd.DataFrame(response)
             # print(df1)
-            prediction = text_api.predict(df1, "./cough_testing/model81.pkl")
+            prediction = text_api.predict(df1, "./model81.pkl")
             
             # pp = os.getcwd()
-            path = "./cough_rec_Int/uploads/hasham.wav"
+            path = "./uploads/hasham.wav"
             
             with open(path, 'wb') as ft:
                 ft.write(hasham.read())
@@ -62,7 +62,7 @@ def data():
             # fp = open (path, 'wb')
             # fp.write (hasham.read())
             # fp.close()
-            fil  = "./cough_rec_Int/uploads/hasham.wav"    
+            fil  = "./uploads/hasham.wav"    
             f, sr = librosa.load(fil, 22050)
             duration = librosa.get_duration(y=f, sr=sr)
             # print(f)
@@ -89,7 +89,7 @@ def data():
             
             # audio_path = './cough_rec_Int/uploads/'+filename
 
-            cough_result = CP.predict(fil, './cough_rec_Int/cough_model.pkl')
+            cough_result = CP.predict(fil, './cough_model.pkl')
 
             if prediction[0] == 0 and cough_result == 0:
                 return "Hurray! You are safe. You are Covid free!!!"
