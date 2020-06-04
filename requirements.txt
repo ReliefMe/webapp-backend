@@ -20,5 +20,4 @@ seaborn==0.10.0
 sklearn==0.0
 Werkzeug==1.0.0
 xgboost==1.0.2
-wave
-librosa
+librosa==0.7.2
