@@ -110,6 +110,7 @@ def data():
             #     return "Hurray! You are safe. You are Covid free!!!"
 
 
+
             # response = {"age": [int(age)], "gender": [gender],
             # "smoker": [smoker], "patient_reported_symptoms": [symptoms],
             # "medical_history": [medical_history]
