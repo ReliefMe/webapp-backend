@@ -4,6 +4,7 @@ import librosa
 
 import cough as CP
 import text_api
+import os
 
 import pandas as pd
 import numpy as np
